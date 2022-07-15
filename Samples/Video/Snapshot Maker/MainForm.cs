@@ -71,7 +71,7 @@ namespace Snapshot_Maker
             snapshotResolutionsCombo.Enabled = enable;
             connectButton.Enabled = enable;
             disconnectButton.Enabled = !enable;
-            triggerButton.Enabled = ( !enable ) && ( snapshotCapabilities.Length != 0 );
+            triggerButton.Enabled =!enable;
         }
 
         // New video device is selected
@@ -183,13 +183,22 @@ namespace Snapshot_Maker
             {
                 videoDevice.SimulateTrigger( );
             }
+            else
+            {
+                videoDevice.NewFrame += VideoDevice_NewFrame;
+            }
+        }
+
+        private void VideoDevice_NewFrame(object sender, NewFrameEventArgs eventArgs)
+        {
+            videoDevice.NewFrame -= VideoDevice_NewFrame;
+            videoDevice_SnapshotFrame(sender, eventArgs);
         }
 
         // New snapshot frame is available
         private void videoDevice_SnapshotFrame( object sender, NewFrameEventArgs eventArgs )
         {
             Console.WriteLine( eventArgs.Frame.Size );
-
             ShowSnapshot( (Bitmap) eventArgs.Frame.Clone( ) );
         }
 
